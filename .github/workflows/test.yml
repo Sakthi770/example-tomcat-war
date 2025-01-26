@@ -1,9 +1,9 @@
-name: Validate & Lint Migration
+name: test
 
 on:
   push:
     branches:
-      - test
+      - master
   workflow_dispatch:
 
 jobs:
