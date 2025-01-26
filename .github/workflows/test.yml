@@ -7,10 +7,18 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-job:
+  prod-job:
     runs-on: ubuntu-latest
     environment:
       name: prod
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+  dev-job:
+    needs: prod-job
+    runs-on: ubuntu-latest
+    environment:
+      name: dev
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
