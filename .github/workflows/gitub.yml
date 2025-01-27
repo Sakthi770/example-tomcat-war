@@ -1,0 +1,14 @@
+name: test github command
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print repository owner login
+        run: |
+          echo ${{ github.event.repository.owner.login }}
+          echo ${{ github.event.repository.owner }}
