@@ -12,3 +12,7 @@ jobs:
         run: |
           echo ${{ github.event.repository.owner.login }}
           echo ${{ github.event.repository.owner }}
+          echo ${{ github.repository_owner }}
+
+      - name: Print
+        run: env | sort
