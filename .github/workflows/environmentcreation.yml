@@ -1,0 +1,21 @@
+name: environment creation
+
+on:
+ push:
+    
+ workflow_dispatch:
+
+jobs:
+   demo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check if Flyway is installed
+        run: |
+          curl -L \
+            -X PUT \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/Sakthi770/example-tomcat-war/environments/workflowenv \
+            -d '{"wait_timer":30,"prevent_self_review":false,"reviewers":[{"type":"User","id":1},{"type":"Team","id":1}],"deployment_branch_policy":{"protected_branches":false,"custom_branch_policies":true}}'
