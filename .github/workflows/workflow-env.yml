@@ -1,4 +1,4 @@
-name:Env creation using workflow
+name: Env creation using workflow
 
 on:
   push:
