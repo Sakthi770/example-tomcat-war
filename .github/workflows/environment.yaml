@@ -95,6 +95,6 @@ jobs:
     steps:
       - name: Get secret and variable from environment
         run: |
-          echo "Env VAR is ${{ env.TRIALVAR }}"
+          echo "Env VAR is ${{ vars.TRIALVAR }}"
           echo "Env Secret is ${{ secrets.MYSECRET }}"
     
