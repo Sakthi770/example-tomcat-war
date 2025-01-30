@@ -49,7 +49,7 @@ jobs:
   
       - name: Run Python script
         run: |
-          echo "ENCRYPTED_SECRET=$(python - <<EOF
+          echo "ENCRYPTED_SECRET=$(python -c
           from base64 import b64encode
           from nacl import encoding, public
           
@@ -60,9 +60,7 @@ jobs:
               encrypted = sealed_box.encrypt(secret_value.encode('utf-8'))
               return b64encode(encrypted).decode('utf-8')
           
-          print(encrypt('$PUBLIC_KEY', 'MYSECRET'))
-          EOF
-          )" >> $GITHUB_ENV
+          print(encrypt('$PUBLIC_KEY', "MYSECRET"))")" >> $GITHUB_ENV
       - name: Use encrypted secret in next step
         run: |
           echo "Encrypted secret is $ENCRYPTED_SECRET"
