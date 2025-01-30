@@ -54,15 +54,15 @@ jobs:
           from nacl import encoding, public
           
           def encrypt(public_key: str, secret_value: str) -> str:
-            """Encrypt a Unicode string using the public key."""
-            public_key = public.PublicKey(public_key.encode("utf-8"), encoding.Base64Encoder())
-            sealed_box = public.SealedBox(public_key)
-            encrypted = sealed_box.encrypt(secret_value.encode("utf-8"))
-            return b64encode(encrypted).decode("utf-8")
-
-          encrypt("$PUBLIC_KEY", "MYSECRET")
-          print(encrypt("$PUBLIC_KEY", "MYSECRET")) EOF )" >> GITHUB_ENV
-
+              \"\"\"Encrypt a Unicode string using the public key.\"\"\"
+              public_key = public.PublicKey(public_key.encode('utf-8'), encoding.Base64Encoder())
+              sealed_box = public.SealedBox(public_key)
+              encrypted = sealed_box.encrypt(secret_value.encode('utf-8'))
+              return b64encode(encrypted).decode('utf-8')
+          
+          print(encrypt('$PUBLIC_KEY', 'MYSECRET'))
+          EOF
+          )" >> $GITHUB_ENV
       - name: Use encrypted secret in next step
         run: |
           echo "Encrypted secret is $ENCRYPTED_SECRET"
