@@ -91,8 +91,8 @@ jobs:
     environment: workflowenv
 
     steps:
-      - name: get secret and variable from environment
+      - name: Get secret and variable from environment
         run: |
-         echo "Env VAR is ${{var.TRIALVAR}}"
-         echo "Env Secret is ${{secrets.MYSECRET}}"
+          echo "Env VAR is ${{ env.TRIALVAR }}"
+          echo "Env Secret is ${{ secrets.MYSECRET }}"
     
