@@ -89,6 +89,7 @@ jobs:
    testenv:
     runs-on: ubuntu-latest
     environment: workflowenv
+    needs: demo
 
     steps:
       - name: Get secret and variable from environment
