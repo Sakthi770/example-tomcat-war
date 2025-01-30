@@ -31,13 +31,14 @@ jobs:
             https://api.github.com/repos/Sakthi770/example-tomcat-war/environments/workflowenv/deployment-branch-policies \
             -d '{"name":"main","type":"branch"}'
           echo "Adding environmental secrets and varaibles"
-          PUBLIC_KEY=$(curl -L \
+          RESPONSE=$(curl -L \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
-            https://api.github.com/repos/Sakthi770/example-tomcat-war/environments/workflowenv/secrets/public-key | jq -r '.key')
-          echo "::add-mask::$PUBLIC_KEY"
-          echo "PUBLIC_KEY=$PUBLIC_KEY" >> $GITHUB_ENV
+            https://api.github.com/repos/Sakthi770/example-tomcat-war/environments/workflowenv/secrets/public-key)
+          echo "::add-mask::$RESPONSE"
+          echo "PUBLIC_KEY=$(echo $RESPONSE | jq -r '.key')" >> $GITHUB_ENV
+          echo "KEY_ID=$(echo $RESPONSE | jq -r '.key_id')" >> $GITHUB_ENV
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -63,6 +64,35 @@ jobs:
            print(encrypt('$PUBLIC_KEY', 'MYSECRET'))
            EOF
            )" >> $GITHUB_ENV
-      - name: Use encrypted secret in next step
+      - name: create a environment secret
         run: |
-          echo "Encrypted secret is $ENCRYPTED_SECRET"
+          echo "Encrypted secret is "
+          echo "Mysecret is $MYSECRET "
+          curl -L \
+          -X PUT \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/Sakthi770/example-tomcat-war/environments/workflowenv/secrets/MYSECRET \
+          -d '{"encrypted_value":"$ENCRYPTED_SECRET","key_id":"$KEY_ID"}'
+
+      - name: create a environment variable
+        run: |
+          curl -L \
+          -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/Sakthi770/example-tomcat-war/environments/workflowenv/variables \
+          -d '{"name":"TRIALVAR","value":"testvar"}'
+
+   testenv:
+    runs-on: ubuntu-latest
+    environment: workflowenv
+
+    steps:
+      - name: get secret and variable from environment
+        run: |
+         echo "Env VAR is ${{var.TRIALVAR}}"
+         echo "Env Secret is ${{secrets.MYSECRET}}"
+    
