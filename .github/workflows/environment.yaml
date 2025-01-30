@@ -64,6 +64,7 @@ jobs:
            print(encrypt('$PUBLIC_KEY', 'MYSECRET'))
            EOF
            )" >> $GITHUB_ENV
+           echo "::add-mask::$ENCRYPTED_SECRET"
       - name: create a environment secret
         run: |
           echo "Encrypted secret is "
@@ -74,7 +75,7 @@ jobs:
           -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           https://api.github.com/repos/Sakthi770/example-tomcat-war/environments/workflowenv/secrets/MYSECRET \
-          -d '{"encrypted_value":"${{ env.ENCRYPTED_SECRET }}","key_id":"$KEY_ID"}'
+          -d '{"encrypted_value":"${{ env.ENCRYPTED_SECRET }}","key_id":"${{ env.KEY_ID }}"}'
 
       - name: create a environment variable
         run: |
