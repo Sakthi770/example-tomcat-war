@@ -78,7 +78,7 @@ jobs:
              echo "Error: JSON array is empty"
              exit 1
            fi
-         echo 'repositories=["Sakthi770/Tekton","Sakthi770/DBschematest","Sakthi770/git-training","Sakthi770/SelfhostedRunner","Sakthi770/GitPractice","Sakthi770/database-management","Sakthi770/flyway-production","Sakthi770/azure_devops","Sakthi770/flyway-selfhosted","Sakthi770/environmentcheck"]' >> "$GITHUB_OUTPUT"
+         echo 'repositories=$formatted_list' >> "$GITHUB_OUTPUT"
 
       - name: Define Colors
         id: colors
@@ -107,7 +107,7 @@ jobs:
              repo: ${{ fromJson(needs.demo.outputs.repositories) }}
        steps:
          - name: check repo name
-           run: echo "Running task in ${{ matrix.repo }}
+           run: echo "Running task in ${{ matrix.repo }}"
          # curl -L \
          #  -H "Accept: application/vnd.github+json" \
          #  -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
