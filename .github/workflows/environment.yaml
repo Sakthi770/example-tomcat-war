@@ -29,8 +29,8 @@ jobs:
            https://api.github.com/search/repositories?q=user:Sakthi770&per_page=100 > repolist.json
 
          cat repolist.json | head -n 30
-         
-         response=$(jq -r '.items[] | select(.private == true) | .full_name' repolist.json)
+         echo "before response"
+         response=$(jq -r '.items[] | .full_name' repolist.json)
          echo "$response"
 
          curl -L \
