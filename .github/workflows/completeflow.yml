@@ -15,7 +15,7 @@ jobs:
         run: |
           user_id=$(curl -s https://api.github.com/users/Sakthi770 | jq '.id')
           echo "userid=$user_id" >> "$GITHUB_OUTPUT"
-          echo $userid
+          echo $user_id
       - name: List Repositories using octokit
         id: repository
         run: |
@@ -41,23 +41,26 @@ jobs:
        environment: prod
        env:
         userid: ${{needs.repo-list.outputs.userid}}         
-       strategy:
-          matrix:
-             repo: ${{ fromJson(needs.repo-list.outputs.repositories) }}
-             environments: [uat]
-             # environments: [dit,uat,prod]
+       # strategy:
+       #    matrix:
+       #       repo: ${{ fromJson(needs.repo-list.outputs.repositories) }}
+       #       environments: [uat]
+       #       # environments: [dit,uat,prod]
        steps:
          - name: Repo name
-           run: echo "Running task in ${{ matrix.repo }}"
+           run: |
+            echo "Running task in ${{ matrix.repo }}"
+            echo "userid: $userid"
+            
          - name: Creating Environment
            run: |
             echo "Creating environment"
-            if [ "${{ matrix.environments }}" == "dit" ]; then
-              request_body='{}'
-            else
+            # if [ "${{ matrix.environments }}" == "dit" ]; then
+            #   request_body='{}'
+            # else
               formatting_request_body="{"wait_timer":1,"prevent_self_review":false,"reviewers":[{"type":"User","id":$userid}],"deployment_branch_policy":{"protected_branches":false,"custom_branch_policies":true}}"
               request_body="$formatting_request_body"
-            fi
+            # fi
 
             echo "$formatting_request_body"
             echo "request_body"
