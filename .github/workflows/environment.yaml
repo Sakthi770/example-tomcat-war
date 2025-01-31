@@ -45,21 +45,29 @@ jobs:
            -H "Authorization: Bearer ${{secrets.PAT_TOKEN}}" \
            -H "X-GitHub-Api-Version: 2022-11-28" \
             "https://api.github.com/search/repositories?q=user:Sakthi770")
+         #!/bin/bash
 
-         full_names=()
-         while IFS= read -r line; do
-           full_names+=("$line")
-         done <<< "$(echo "$response" | jq -r '.items[] | .full_name')"
+
+         fullname=$(echo "$response" | jq -r '.items[] | .full_name')
+         echo "fullname:$fullname"
+         
+         formatted_list=$(echo "$fullname" | sed 's/^/"/;s/$/"/' | paste -sd, - | sed 's/^/[/' | sed 's/$/]/')
+         echo "$formatted_list"
+
+         # full_names=()
+         # while IFS= read -r line; do
+         #   full_names+=("$line")
+         # done <<< "$(echo "$response" | jq -r '.items[] | .full_name')"
           
-         # Convert the array to a JSON array
-         json_array=$(printf "[\"%s\"]" "$(IFS='","'; echo "${full_names[*]}")")
+         # # Convert the array to a JSON array
+         # json_array=$(printf "[\"%s\"]" "$(IFS='","'; echo "${full_names[*]}")")
           
          # Correct the formatting to ensure the proper comma separation
-         json_array="[\"$(IFS='","'; echo "${full_names[*]}")\"]"
+         #json_array="[\"$(IFS='","'; echo "${full_names[*]}")\"]"
          #JSON Array: ["Sakthi770/Tekton"Sakthi770/DBschematest"Sakthi770/git-training"Sakthi770/SelfhostedRunner"Sakthi770/GitPractice"Sakthi770/database-management"Sakthi770/flyway-production"Sakthi770/azure_devops"Sakthi770/flyway-selfhosted"Sakthi770/environmentcheck"]
          #json_array=$(printf '["%s"]' "$(IFS=','; echo "${full_names[*]}")")
          #JSON Array: ["Sakthi770/Tekton,Sakthi770/DBschematest,Sakthi770/git-training,Sakthi770/SelfhostedRunner,Sakthi770/GitPractice,Sakthi770/database-management,Sakthi770/flyway-production,Sakthi770/azure_devops,Sakthi770/flyway-selfhosted,Sakthi770/environmentcheck"]
-         echo "JSON Array: $json_array"
+         echo "JSON Array: $formatted_list"
 
            if [ -z "$json_array" ]; then
              echo "Error: JSON array is empty"
