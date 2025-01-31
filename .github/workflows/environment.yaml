@@ -42,6 +42,12 @@ jobs:
          done
 
          json_array=$(printf "[%s]" "$(IFS=,; echo "${full_names[*]}")")
+         echo "JSON Array: $json_array"
+
+           if [ -z "$json_array" ]; then
+             echo "Error: JSON array is empty"
+             exit 1
+           fi
          echo "repositories=$json_array" >> $GITHUB_OUTPUT
    
    check-repo-name:
