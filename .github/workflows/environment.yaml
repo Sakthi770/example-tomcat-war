@@ -73,14 +73,14 @@ jobs:
              echo "Error: JSON array is empty"
              exit 1
            fi
-         echo "repositories=$formatted_list" >> $GITHUB_OUTPUT
+         echo 'repositories=["Sakthi770/Tekton","Sakthi770/DBschematest","Sakthi770/git-training","Sakthi770/SelfhostedRunner","Sakthi770/GitPractice","Sakthi770/database-management","Sakthi770/flyway-production","Sakthi770/azure_devops","Sakthi770/flyway-selfhosted","Sakthi770/environmentcheck"]' >> $GITHUB_OUTPUT
    
    check-repo-name:
        needs: demo
        runs-on: ubuntu-latest
        strategy:
           matrix:
-             repo: ${{ fromJson(needs.demo.outputs.repositories)}}
+             repo: ${{ fromJson(needs.demo.outputs.repositories) }}
        steps:
          - name: check repo name
            run: echo "Running task in ${{ matrix.repo }}
