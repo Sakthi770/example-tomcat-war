@@ -9,9 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
          repositories: ${{ steps.repository.outputs.repositories }}
-         userid: ${{ steps.repository.outputs.userid }}
+         userid: ${{ steps.userdetails.outputs.userid }}
     steps:
       - name: get user-id
+        id: userdetails
         run: |
           user_id=$(curl -s https://api.github.com/users/Sakthi770 | jq '.id')
           echo "userid=$user_id" >> "$GITHUB_OUTPUT"
