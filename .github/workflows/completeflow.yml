@@ -53,7 +53,7 @@ jobs:
             if [ "${{ matrix.environments }}" == "dit" ]; then
               reviewers='{}'
             else
-              reviewers='{"prevent_self_review":false,"reviewers":[{"type":"User","id":$userid}],"deployment_branch_policy":{"protected_branches":false,"custom_branch_policies":true}}'
+              reviewers="{"prevent_self_review":false,"reviewers":[{"type":"User","id":$userid}],"deployment_branch_policy":{"protected_branches":false,"custom_branch_policies":true}}"
             fi
             curl -L \
               -X PUT \
