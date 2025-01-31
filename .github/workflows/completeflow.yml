@@ -59,7 +59,7 @@ jobs:
               request_body='{}'
             else
               request_body=$(jq -n --argjson uid "$userid" \
-              '{"wait_timer":1,"prevent_self_review":false,"reviewers":[{"type":"User","id":$uid}],"deployment_branch_policy":{"protected_branches":false,"custom_branch_policies":true}}')
+              '{"prevent_self_review":false,"reviewers":[{"type":"User","id":$uid}],"deployment_branch_policy":{"protected_branches":false,"custom_branch_policies":true}}')
             fi
 
             curl -L \
