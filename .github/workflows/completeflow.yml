@@ -1,0 +1,78 @@
+name: complete environment
+
+on:
+ push:
+ workflow_dispatch:
+
+jobs:
+   repo-list:
+    runs-on: ubuntu-latest
+    outputs:
+         repositories: ${{ steps.repository.outputs.repositories }}
+         userid: ${{ steps.repository.outputs.userid }}
+    steps:
+      - name: get user-id
+        run: |
+          user_id=(curl -s https://api.github.com/users/Sakthi770 | jq '.id')
+          echo "userid=$user_id" >> "$GITHUB_OUTPUT"
+      - name: List Repositories using octokit
+        id: repository
+        run: |
+          response=$(curl -L \
+           -H "Accept: application/vnd.github+json" \
+           -H "Authorization: Bearer ${{secrets.PAT_TOKEN}}" \
+           -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/search/repositories?q=user:Sakthi770")
+          Repolist=$(echo "$response" | jq -r '.items[] | .full_name')
+          echo "RepoList:$Repolist"
+         
+          formatted_repo_list=$(echo "$fullname" | sed 's/^/"/;s/$/"/' | paste -sd, - | sed 's/^/[/' | sed 's/$/]/')
+          # echo "$formatted_repo_list"
+          if [ -z "$formatted_list" ]; then
+             echo "Error: LRepo List is empty"
+             exit 1
+           fi
+           echo "repositories=$formatted_list" >> "$GITHUB_OUTPUT"
+        
+   Add-Environments:
+       needs: repo-list
+       runs-on: ubuntu-latest
+       environment: prod
+       env:
+        userid: ${{needs.repo-list.outputs.userid}}         
+       strategy:
+          matrix:
+             repo: ${{ fromJson(needs.repo-list.outputs.repositories) }}
+             environments: [dit,uat,prod]
+       steps:
+         - name: Repo name
+           run: echo "Running task in ${{ matrix.repo }}"
+         - name: Creating Environment
+           run: |
+            echo "Creating environment"
+            if [ "${{ matrix.environments }}" == "dit" ]; then
+              reviewers='{}'
+            else
+              reviewers='{"prevent_self_review":false,"reviewers":[{"type":"User","id":$userid}],"deployment_branch_policy":{"protected_branches":false,"custom_branch_policies":true}}'
+            fi
+            curl -L \
+              -X PUT \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              https://api.github.com/repos/${{ matrix.repo }}/environments/${{ matrix.environments }} \
+              -d '$reviewers'
+              
+         - name: Creating branch policy
+           if: ${{ matrix.repo != "dit"}}
+           run: | 
+            echo "Creating deployment branch policy"
+            curl -L \
+              -X POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              https://api.github.com/repos/${{ matrix.repo }}/environments/workflowenv/deployment-branch-policies \
+              -d '{"name":"master","type":"branch"}'
+          
+    
