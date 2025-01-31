@@ -28,11 +28,11 @@ jobs:
          
           formatted_repo_list=$(echo "$fullname" | sed 's/^/"/;s/$/"/' | paste -sd, - | sed 's/^/[/' | sed 's/$/]/')
           # echo "$formatted_repo_list"
-          if [ -z "$formatted_list" ]; then
-             echo "Error: LRepo List is empty"
+          if [ -z "$formatted_repo_list" ]; then
+             echo "Error: Repo List is empty"
              exit 1
            fi
-           echo "repositories=$formatted_list" >> "$GITHUB_OUTPUT"
+           echo "repositories=$formatted_repo_list" >> "$GITHUB_OUTPUT"
         
    Add-Environments:
        needs: repo-list
