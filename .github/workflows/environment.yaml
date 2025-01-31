@@ -8,6 +8,10 @@ jobs:
    demo:
     runs-on: ubuntu-latest
 
+    outputs:
+         colors: ${{ steps.colors.outputs.colors }}
+         repo: ${{ steps.repo.outputs.repositories }}
+
     steps:
       - name: get user-id
         run: curl -s https://api.github.com/users/Sakthi770 | jq '.id'
@@ -21,6 +25,7 @@ jobs:
         run : echo '${{steps.get-repos.outputs.repos}}' | jq -r '.[] | select(.private == true) | .full_name'
 
       - name: List Repositories using octokit
+        id: repo
         run: |          
          # response=$(curl -L \
          #   -H "Accept: application/vnd.github+json" \
