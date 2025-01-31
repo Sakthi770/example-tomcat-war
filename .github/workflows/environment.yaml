@@ -52,7 +52,7 @@ jobs:
          done <<< "$(echo "$response" | jq -r '.items[] | .full_name')"
                   
 
-         json_array=$(printf "[\%s\]" "$(IFS='","'; echo "${full_names[*]}")")
+         json_array=$(printf "[\"%s\"]" "$(IFS='","'; echo "${full_names[*]}")")
          echo "JSON Array: $json_array"
 
            if [ -z "$json_array" ]; then
