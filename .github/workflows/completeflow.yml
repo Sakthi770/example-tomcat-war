@@ -50,7 +50,7 @@ jobs:
          - name: Creating Environment
            run: |
             echo "Creating environment"
-            if [ "${{ matrix.environments }}" == "dit" ]; then
+            if [ "${{ matrix.environments }}" == dit ]; then
               reviewers='{}'
             else
               reviewers='{"prevent_self_review":false,"reviewers":[{"type":"User","id":$userid}],"deployment_branch_policy":{"protected_branches":false,"custom_branch_policies":true}}'
@@ -64,7 +64,7 @@ jobs:
               -d '$reviewers'
               
          - name: Creating branch policy
-           if: ${{ matrix.repo != "dit"}}
+           if: ${{ matrix.environments != dit }}
            run: | 
             echo "Creating deployment branch policy"
             curl -L \
