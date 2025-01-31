@@ -19,7 +19,7 @@ jobs:
           owner: Sakthi770
           github-token: ${{ secrets.PAT_TOKEN }}
       - name: rpeo list
-        run : echo "Relo list:${{steps.get-repos.outputs.repos}}"
+        run : echo "Relo list:${{steps.get-repos.outputs.repos}}" | jq -r '.[] | map(select(.private == true)) | .full_name'
 
       - name: List Repositories using octokit
         run: |          
