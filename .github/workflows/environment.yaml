@@ -10,7 +10,7 @@ jobs:
 
     outputs:
          colors: ${{ steps.colors.outputs.colors }}
-         repo: ${{ steps.repo.outputs.repositories }}
+         repositories: ${{ steps.repository.outputs.repositories }}
 
     steps:
       - name: get user-id
@@ -25,7 +25,7 @@ jobs:
         run : echo '${{steps.get-repos.outputs.repos}}' | jq -r '.[] | select(.private == true) | .full_name'
 
       - name: List Repositories using octokit
-        id: repo
+        id: repository
         run: |          
          # response=$(curl -L \
          #   -H "Accept: application/vnd.github+json" \
