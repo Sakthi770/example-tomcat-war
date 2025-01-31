@@ -52,7 +52,9 @@ jobs:
          done <<< "$(echo "$response" | jq -r '.items[] | .full_name')"
                   
 
-         json_array=$(printf "[\"%s\"]" "$(IFS='","'; echo "${full_names[*]}")")
+         #json_array=$(printf "[\"%s\"]" "$(IFS='","'; echo "${full_names[*]}")")
+         #JSON Array: ["Sakthi770/Tekton"Sakthi770/DBschematest"Sakthi770/git-training"Sakthi770/SelfhostedRunner"Sakthi770/GitPractice"Sakthi770/database-management"Sakthi770/flyway-production"Sakthi770/azure_devops"Sakthi770/flyway-selfhosted"Sakthi770/environmentcheck"]
+         json_array=$(printf '["%s"]' "$(IFS=','; echo "${full_names[*]}")")
          echo "JSON Array: $json_array"
 
            if [ -z "$json_array" ]; then
