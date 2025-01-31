@@ -15,6 +15,7 @@ jobs:
         run: |
           user_id=$(curl -s https://api.github.com/users/Sakthi770 | jq '.id')
           echo "userid=$user_id" >> "$GITHUB_OUTPUT"
+          echo $userid
       - name: List Repositories using octokit
         id: repository
         run: |
