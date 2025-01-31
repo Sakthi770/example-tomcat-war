@@ -31,14 +31,12 @@ jobs:
           for repo in $Repolist; do
             echo "$repo"
             environments=$(curl -s -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/$repo/environments | jq '.total_count')
-            if [ "$environments" -eq 0 ]; then
+            if [ "$environments" != "null" ] && [ "$environments" -eq 0 ]; then
               repos_without_envs+=("$repo")
             fi
           done
-
-          echo "$repos_without_envs"
          
-          formatted_repo_list=$(echo "$Repolist" | sed 's/^/"/;s/$/"/' | paste -sd, - | sed 's/^/[/' | sed 's/$/]/')
+          formatted_repo_list=$(echo "$repos_without_envs" | sed 's/^/"/;s/$/"/' | paste -sd, - | sed 's/^/[/' | sed 's/$/]/')
           echo "$formatted_repo_list"
           if [ -z "$formatted_repo_list" ]; then
              echo "Error: Repo List is empty"
