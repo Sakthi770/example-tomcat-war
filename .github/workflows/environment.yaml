@@ -29,7 +29,12 @@ jobs:
             "https://api.github.com/search/repositories?q=user:Sakthi770" | jq -r '.items[] | .full_name' )
 
          # Store the output in an array
-         IFS=$'\n' read -rd '' -a full_names <<<"$response"
+         # IFS=$'\n' read -rd '' -a full_names <<<"$response"
+         full_names=()
+         while IFS= read -r line; do
+           full_names+=("$line")
+         done <<< "$response"
+
          
          # Print the array elements
          for full_name in "${full_names[@]}"; do
