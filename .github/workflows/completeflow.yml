@@ -27,6 +27,16 @@ jobs:
             "https://api.github.com/search/repositories?q=user:Sakthi770")
           Repolist=$(echo "$response" | jq -r '.items[] | .full_name')
           echo "RepoList:$Repolist"
+
+          for repo in $Repolist; do
+            echo "$repo"
+            environments=$(curl -s -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/$repo/environments | jq '.total_count')
+            if [ "$environments" -eq 0 ]; then
+              repos_without_envs+=("$repo")
+            fi
+          done
+
+          echo "$repos_without_envs"
          
           formatted_repo_list=$(echo "$Repolist" | sed 's/^/"/;s/$/"/' | paste -sd, - | sed 's/^/[/' | sed 's/$/]/')
           echo "$formatted_repo_list"
@@ -36,50 +46,50 @@ jobs:
            fi
            echo "repositories=$formatted_repo_list" >> "$GITHUB_OUTPUT"
         
-   Add-Environments:
-       needs: repo-list
-       runs-on: ubuntu-latest
-       environment: prod
-       env:
-        userid: ${{needs.repo-list.outputs.userid}}         
-       strategy:
-          matrix:
-             repo: ${{ fromJson(needs.repo-list.outputs.repositories) }}
-             environments: [dit,uat,prod]
-       steps:
-         - name: Repo name
-           run: |
-            echo "Running task in ${{ matrix.repo }}"
-            echo "userid: $userid"
+   # Add-Environments:
+   #     needs: repo-list
+   #     runs-on: ubuntu-latest
+   #     environment: prod
+   #     env:
+   #      userid: ${{needs.repo-list.outputs.userid}}         
+   #     strategy:
+   #        matrix:
+   #           repo: ${{ fromJson(needs.repo-list.outputs.repositories) }}
+   #           environments: [dit,uat,prod]
+   #     steps:
+   #       - name: Repo name
+   #         run: |
+   #          echo "Running task in ${{ matrix.repo }}"
+   #          echo "userid: $userid"
             
-         - name: Creating Environment
-           run: |
-            echo "Creating environment"
-            if [ "${{ matrix.environments }}" == "dit" ]; then
-              request_body='{}'
-            else
-              request_body=$(jq -n --argjson uid "$userid" \
-              '{"prevent_self_review":false,"reviewers":[{"type":"User","id":$uid}],"deployment_branch_policy":{"protected_branches":false,"custom_branch_policies":true}}')
-            fi
+   #       - name: Creating Environment
+   #         run: |
+   #          echo "Creating environment"
+   #          if [ "${{ matrix.environments }}" == "dit" ]; then
+   #            request_body='{}'
+   #          else
+   #            request_body=$(jq -n --argjson uid "$userid" \
+   #            '{"prevent_self_review":false,"reviewers":[{"type":"User","id":$uid}],"deployment_branch_policy":{"protected_branches":false,"custom_branch_policies":true}}')
+   #          fi
 
-            curl -L \
-              -X PUT \
-              -H "Accept: application/vnd.github+json" \
-              -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
-              -H "X-GitHub-Api-Version: 2022-11-28" \
-              https://api.github.com/repos/${{ matrix.repo }}/environments/${{ matrix.environments }} \
-              -d "$request_body"
+   #          curl -L \
+   #            -X PUT \
+   #            -H "Accept: application/vnd.github+json" \
+   #            -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
+   #            -H "X-GitHub-Api-Version: 2022-11-28" \
+   #            https://api.github.com/repos/${{ matrix.repo }}/environments/${{ matrix.environments }} \
+   #            -d "$request_body"
               
-         - name: Creating branch policy
-           if: ${{ matrix.environments != 'dit' }}
-           run: | 
-            echo "Creating deployment branch policy"
-            curl -L \
-              -X POST \
-              -H "Accept: application/vnd.github+json" \
-              -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
-              -H "X-GitHub-Api-Version: 2022-11-28" \
-              https://api.github.com/repos/${{ matrix.repo }}/environments/${{ matrix.environments }}/deployment-branch-policies \
-              -d '{"name":"master","type":"branch"}'
+   #       - name: Creating branch policy
+   #         if: ${{ matrix.environments != 'dit' }}
+   #         run: | 
+   #          echo "Creating deployment branch policy"
+   #          curl -L \
+   #            -X POST \
+   #            -H "Accept: application/vnd.github+json" \
+   #            -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
+   #            -H "X-GitHub-Api-Version: 2022-11-28" \
+   #            https://api.github.com/repos/${{ matrix.repo }}/environments/${{ matrix.environments }}/deployment-branch-policies \
+   #            -d '{"name":"master","type":"branch"}'
           
     
