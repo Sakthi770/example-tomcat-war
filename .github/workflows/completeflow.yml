@@ -43,7 +43,7 @@ jobs:
        strategy:
           matrix:
              repo: ${{ fromJson(needs.repo-list.outputs.repositories) }}
-             environments: [dit]
+             environments: [uat]
              # environments: [dit,uat,prod]
        steps:
          - name: Repo name
