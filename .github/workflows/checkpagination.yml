@@ -26,6 +26,6 @@ jobs:
            -H "Accept: application/vnd.github+json" \
            -H "Authorization: Bearer ${{secrets.PAT_TOKEN}}" \
            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/search/repositories?q=user:Sakthi770")
+            "https://api.github.com/search/repositories?q=user:Sakthi770&per_page=2")
           Repolist=$(echo "$response" | jq -r '.items[] | .full_name')
           echo " Repolist: $Repolist"
