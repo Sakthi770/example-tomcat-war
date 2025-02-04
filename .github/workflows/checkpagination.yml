@@ -1,0 +1,34 @@
+name: complete environment
+
+on:
+ push:
+ workflow_dispatch:
+
+jobs:
+   repo-list:
+    runs-on: ubuntu-latest
+    outputs:
+         repositories: ${{ steps.repository.outputs.repositories }}
+         userid: ${{ steps.userdetails.outputs.userid }}
+    steps:
+      - name: get user-id
+        id: userdetails
+        run: |
+          user_id=$(curl -s https://api.github.com/users/Sakthi770 | jq '.id')
+          echo "userid=$user_id" >> "$GITHUB_OUTPUT"
+          echo $user_id
+      - name: List Repositories
+        id: repository
+        run: |
+          curl -L \
+           -H "Accept: application/vnd.github+json" \
+           -H "Authorization: Bearer ${{secrets.PAT_TOKEN}}" \
+           -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/search/repositories?q=user:Sakthi770?per_page=2
+          response=$(curl -L \
+           -H "Accept: application/vnd.github+json" \
+           -H "Authorization: Bearer ${{secrets.PAT_TOKEN}}" \
+           -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/search/repositories?q=user:Sakthi770")
+          Repolist=$(echo "$response" | jq -r '.items[] | .full_name')
+          echo " Repolist: $Repolist"
