@@ -28,7 +28,11 @@ jobs:
               
             echo "$response"
             
-            next_page=$(echo "$response" | grep -i "Link:" | grep -oP '(?<=<)[^>]+(?=>; rel="next")')
+            headers=$(echo "$response" | sed -n '/^\r$/q;p')
+            body=$(echo "$response" | sed -n '/^\r$/,$p' | tail -n +2)
+            
+            # Extract next page link
+            next_page=$(echo "$headers" | grep -i "Link:" | grep -oP '(?<=<)[^>]+(?=>; rel="next")')
             
             if [ -z "$next_page" ]; then
               page="null"
