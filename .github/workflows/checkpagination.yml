@@ -17,11 +17,26 @@ jobs:
       - name: List Repositories
         id: repository
         run: |
-          curl -L \
-           -H "Accept: application/vnd.github+json" \
-           -H "Authorization: Bearer ${{secrets.PAT_TOKEN}}" \
-           -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/search/repositories?q=user:Sakthi770&per_page=2"
+          per_page=2
+          page=1
+          while [ "$page" != "null" ]; do
+            response=$(curl -L -s -D - \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/search/repositories?q=user:Sakthi770?per_page=$per_page&page=$page")
+            
+            echo "$response" | grep -i "Link:" | grep -oP '(?<=<)[^>]+(?=>; rel="next")' | read next_page
+            
+            if [ -z "$next_page" ]; then
+              page="null"
+            else
+              page=$(echo "$next_page" | grep -oP '(?<=page=)\d+')
+            fi
+            
+            echo "$response" | jq '.'
+          done
+          
           response=$(curl -L \
            -H "Accept: application/vnd.github+json" \
            -H "Authorization: Bearer ${{secrets.PAT_TOKEN}}" \
