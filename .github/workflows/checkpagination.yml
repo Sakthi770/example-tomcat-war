@@ -28,7 +28,7 @@ jobs:
               
             echo "$response"
             
-            echo "$response" | grep -i "Link:" | grep -oP '(?<=<)[^>]+(?=>; rel="next")' | read next_page
+            next_page=$(echo "$response" | grep -i "Link:" | grep -oP '(?<=<)[^>]+(?=>; rel="next")')
             
             if [ -z "$next_page" ]; then
               page="null"
