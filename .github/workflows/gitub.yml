@@ -1,4 +1,4 @@
-name: test github command
+name: test
 
 on:
   push:
