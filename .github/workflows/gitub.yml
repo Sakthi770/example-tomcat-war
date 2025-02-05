@@ -56,7 +56,7 @@ jobs:
               is_branch_policy_required=false
             else
               is_branch_policy_required=true
-              request_body=$(jq -n --argjson reviewers "$REVIEWERS_JSON" \
+              request_body=$(jq -nc --argjson reviewers "$REVIEWERS_JSON" \
                 '{"prevent_self_review":false,"reviewers":$reviewers,"deployment_branch_policy":{"protected_branches":false,"custom_branch_policies":true}}')
               echo "request_body=$request_body"
             fi
