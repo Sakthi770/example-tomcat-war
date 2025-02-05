@@ -30,7 +30,7 @@ jobs:
           # Reviewers List: [{"type":"Team","id":13547},{"type":"Team","id":12639}]
 
           # echo "Reviewers List: $(echo "$REVIEWERS_JSON" | jq -c)"
-          echo "reviewers_json=[{"type":"Team","id":13547},{"type":"Team","id":12639}]" >> "$GITHUB_OUTPUT"
+          echo "reviewers_json='[{"type":"Team","id":13547},{"type":"Team","id":12639}]'" >> "$GITHUB_OUTPUT"
       - name: check
         env:
           ENV_CREATE: '["dit", "uat", "prod"]' 
