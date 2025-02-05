@@ -31,7 +31,7 @@ jobs:
          # Create the reviewers JSON array
           REVIEWERS_JSON="[]"
           for TEAM_ID in "${TEAM_IDS[@]}"; do
-            REVIEWERS_JSON=$(echo "$REVIEWERS_JSON" | jq --argjson team "{\"type\": \"Team\", \"id\": $TEAM_ID}" '. += [$team]')
+            REVIEWERS_JSON=$(echo "$REVIEWERS_JSON" | jq --argjson team '{"type": "Team", "id": '$TEAM_ID'}' '. += [$team]')
           done
 
           echo "Reviewers List: $(echo "$REVIEWERS_JSON" | jq -c)"
@@ -45,7 +45,7 @@ jobs:
     steps:
       - name: Check environments
         run: |
-          REVIEWERS_JSON=${{ needs.check-github-context.outputs.reviewers_json }}
+          REVIEWERS_JSON='${{ needs.check-github-context.outputs.reviewers_json }}'
           echo "REVIEWERS_JSON = $REVIEWERS_JSON"
 
           ENV_ARRAY=$(echo $ENV_CREATE | jq -r '.[]')
