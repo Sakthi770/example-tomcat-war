@@ -26,7 +26,7 @@ jobs:
         id: testing
         run: |
     
-          REVIEWERS_JSON=[{"type":"Team","id":13547},{"type":"Team","id":12639}]
+          REVIEWERS_JSON="[{"type":"Team","id":13547},{"type":"Team","id":12639}]"
   
           echo "Reviewers List: $(echo "$REVIEWERS_JSON" | jq -c)"
           echo "reviewers_json=$(echo "$REVIEWERS_JSON" | jq -c)" >> "$GITHUB_OUTPUT"
@@ -48,4 +48,5 @@ jobs:
               request_body=$(jq -n --argjson reviewers ${{ needs.check-environments.outputs.reviewers_json }} \
               '{"prevent_self_review":false,"reviewers":$reviewers,"deployment_branch_policy":{"protected_branches":false,"custom_branch_policies":true}}')
             fi
+          done
 
