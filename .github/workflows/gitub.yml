@@ -21,3 +21,34 @@ jobs:
         shell: bash
         env:
          GITHUB_CONTEXT: ${{ toJson(github) }}
+
+      - name: check github context
+        id: testing
+        run: |
+          TEAM_IDS=["123","256"]
+          REVIEWERS_JSON="[]"
+          for TEAM_ID in "${TEAM_IDS[@]}"; do
+            REVIEWERS_JSON=$(echo "$REVIEWERS_JSON" | jq --argjson team '{"type": "Team", "id": '$TEAM_ID'}' '. += [$team]')
+          done
+  
+          echo "Reviewers List: $(echo "$REVIEWERS_JSON" | jq -c)"
+          echo "reviewers_json=$(echo "$REVIEWERS_JSON" | jq -c)" >> "$GITHUB_OUTPUT"
+      - name: check
+        env:
+          ENV_CREATE: '["dit", "uat", "prod"]' 
+        run: |        
+          REVIEWERS_JSON='${{ steps.testing.outputs.reviewers_json }}'
+          echo "REVIEWERS_JSON = $REVIEWERS_JSON"
+
+          ENV_ARRAY=$(echo $ENV_CREATE | jq -r '.[]')
+
+          for NEW_ENV in $ENV_ARRAY; do
+            if [ "$NEW_ENV" == "dit" ]; then
+              request_body='{}'
+              is_branch_policy_required=false
+            else
+              is_branch_policy_required=true
+              request_body=$(jq -n --argjson reviewers ${{ needs.check-environments.outputs.reviewers_json }} \
+              '{"prevent_self_review":false,"reviewers":$reviewers,"deployment_branch_policy":{"protected_branches":false,"custom_branch_policies":true}}')
+            fi
+
