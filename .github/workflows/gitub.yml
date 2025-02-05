@@ -3,6 +3,8 @@ name: test1
 on:
   push:
   workflow_dispatch:
+env:
+  TEAM_NAMES: '["devops-repo-admins", "devops"]'
 
 jobs:
   check-github-context:
@@ -61,3 +63,8 @@ jobs:
               echo "request_body=$request_body"
             fi
           done
+
+          TEAM_NAMES_ARRAY=$(echo "$TEAM_NAMES" | jq -r '.[]')
+            for TEAM_NAME in $TEAM_NAMES_ARRAY; do
+              echo "Add team to the repo"
+            done
