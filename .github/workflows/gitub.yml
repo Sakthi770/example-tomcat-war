@@ -25,11 +25,8 @@ jobs:
       - name: check github context
         id: testing
         run: |
-          TEAM_IDS=["123","256"]
-          REVIEWERS_JSON="[]"
-          for TEAM_ID in "${TEAM_IDS[@]}"; do
-            REVIEWERS_JSON=$(echo "$REVIEWERS_JSON" | jq --argjson team '{"type": "Team", "id": '$TEAM_ID'}' '. += [$team]')
-          done
+    
+          REVIEWERS_JSON=[{"type":"Team","id":13547},{"type":"Team","id":12639}]
   
           echo "Reviewers List: $(echo "$REVIEWERS_JSON" | jq -c)"
           echo "reviewers_json=$(echo "$REVIEWERS_JSON" | jq -c)" >> "$GITHUB_OUTPUT"
