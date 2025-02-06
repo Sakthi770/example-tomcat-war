@@ -47,7 +47,6 @@ jobs:
           # echo "::add-mask::$GITHUB_TOKEN"
           GH_TOKEN=TEST
           echo "TEST_TOKEN=$GITHUB_TOKEN" >> "$GITHUB_OUTPUT"
-          echo "TEST_TOKEN=$GITHUB_TOKEN" >> $GITHUB_ENV
     
       - name: Get list of repositories in the organization
         id: get-repos
