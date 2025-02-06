@@ -31,7 +31,7 @@ jobs:
     outputs:
         REPOS: ${{ steps.get-repos.outputs.repos }}
         ORG_NAME: ${{ steps.org_prefix.outputs.ORG_NAME }}
-        GH_TOKEN: ${{ steps.githubtoken.outputs.GH_TOKEN }}
+        TEST_TOKEN: ${{ steps.githubtoken.outputs.TEST_TOKEN }}
     steps:
       - name: Set org prefix & variables
         id: org_prefix
@@ -46,8 +46,8 @@ jobs:
           echo "Vault name: ${{ steps.org_prefix.outputs.runner_key_vault_name }}" 
           # echo "::add-mask::$GITHUB_TOKEN"
           GH_TOKEN=TEST
-          echo "GH_TOKEN=$GITHUB_TOKEN" >> "$GITHUB_OUTPUT"
-          echo "GH_TOKEN=$GITHUB_TOKEN" >> $GITHUB_ENV
+          echo "TEST_TOKEN=$GITHUB_TOKEN" >> "$GITHUB_OUTPUT"
+          echo "TEST_TOKEN=$GITHUB_TOKEN" >> $GITHUB_ENV
     
       - name: Get list of repositories in the organization
         id: get-repos
@@ -63,7 +63,7 @@ jobs:
     needs: repo-list
     env:
       ORG_NAME: ${{ needs.repo-list.outputs.ORG_NAME}}
-      GH_TOKEN: ${{ needs.repo-list.outputs.GH_TOKEN }}
+      TEST_TOKEN: ${{ needs.repo-list.outputs.TEST_TOKEN }}
     outputs:
       repos_without_environments: ${{ steps.filter-repos.outputs.repos_without_environments }}
       all_repos: ${{ steps.get-all-repos.outputs.repos }}
@@ -81,4 +81,4 @@ jobs:
           REPO_LIST=${{ needs.repo-list.outputs.repos }}
           echo $REPO_LIST
           echo $ORG_NAME
-          echo $GH_TOKEN
+          echo $TEST_TOKEN
