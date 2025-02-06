@@ -26,45 +26,59 @@ jobs:
         env:
          GITHUB_CONTEXT: ${{ toJson(github) }}
 
-      - name: check github context
-        id: testing
-        run: |
-         TEAM_IDS=("12345" "67890")
-         # Create the reviewers JSON array
-          REVIEWERS_JSON="[]"
-          for TEAM_ID in "${TEAM_IDS[@]}"; do
-            REVIEWERS_JSON=$(echo "$REVIEWERS_JSON" | jq --argjson team '{"type": "Team", "id": '$TEAM_ID'}' '. += [$team]')
-          done
-
-          echo "Reviewers List: $(echo "$REVIEWERS_JSON" | jq -c)"
-          echo "reviewers_json=$(echo "$REVIEWERS_JSON" | jq -c)" >> "$GITHUB_OUTPUT"
-
-  check:
+  repo-list:
     runs-on: ubuntu-latest
-    needs: check-github-context
-    env:
-      ENV_CREATE: '["dit", "uat", "prod"]'
+    outputs:
+        REPOS: ${{ steps.get-repos.outputs.repos }}
+        ORG_NAME: ${{ steps.org_prefix.outputs.ORG_NAME }}
+        GH_TOKEN: ${{ steps.githubtoken.outputs.GH_TOKEN }}
     steps:
-      - name: Check environments
+      - name: Set org prefix & variables
+        id: org_prefix
+        shell: bash
         run: |
-          REVIEWERS_JSON='${{ needs.check-github-context.outputs.reviewers_json }}'
-          echo "REVIEWERS_JSON = $REVIEWERS_JSON"
+          echo "runner_key_vault_name=runnerkeyvaultname" >> "$GITHUB_OUTPUT"
+          echo "ORG_NAME=esxp-platform" >> "$GITHUB_OUTPUT"
 
-          ENV_ARRAY=$(echo $ENV_CREATE | jq -r '.[]')
+      - name: github access token
+        id: githubtoken
+        run: |
+          echo "Vault name: ${{ steps.org_prefix.outputs.runner_key_vault_name }}" 
+          # echo "::add-mask::$GITHUB_TOKEN"
+          GH_TOKEN=TEST
+          echo "GH_TOKEN=$GITHUB_TOKEN" >> "$GITHUB_OUTPUT"
+          echo "GH_TOKEN=$GITHUB_TOKEN" >> $GITHUB_ENV
+    
+      - name: Get list of repositories in the organization
+        id: get-repos
+        run: |
+            ORG_NAME=${{ steps.org_prefix.outputs.org_name }}
+  
+            echo "REPOS=["environment-approval-demo","packer-build"]" >> "$GITHUB_OUTPUT"
+            #echo "repos=["environment-approval-demo","packer-build"]" >> "$GITHUB_OUTPUT"
+            echo "repos=$REPOS"
 
-          for NEW_ENV in $ENV_ARRAY; do
-            if [ "$NEW_ENV" == "dit" ]; then
-              request_body='{}'
-              is_branch_policy_required=false
-            else
-              is_branch_policy_required=true
-              request_body=$(jq -nc --argjson reviewers "$REVIEWERS_JSON" \
-                '{"prevent_self_review":false,"reviewers":$reviewers,"deployment_branch_policy":{"protected_branches":false,"custom_branch_policies":true}}')
-              echo "request_body=$request_body"
-            fi
-          done
-
-          TEAM_NAMES_ARRAY=$(echo "$TEAM_NAMES" | jq -r '.[]')
-            for TEAM_NAME in $TEAM_NAMES_ARRAY; do
-              echo "Add team to the repo"
-            done
+  check-environments:
+    runs-on: ubuntu-latest
+    needs: repo-list
+    env:
+      ORG_NAME: ${{ needs.repo-list.outputs.ORG_NAME}}
+      GH_TOKEN: ${{ needs.repo-list.outputs.GH_TOKEN }}
+    outputs:
+      repos_without_environments: ${{ steps.filter-repos.outputs.repos_without_environments }}
+      all_repos: ${{ steps.get-all-repos.outputs.repos }}
+      ORG_NAME: ${{ needs.repo-list.outputs.ORG_NAME}}
+    steps:
+      - name: Get all repos
+        id: get-all-repos
+        run: |
+          echo "repos=${{ needs.repo-list.outputs.repos }}"
+          echo "repos=${{ needs.repo-list.outputs.repos }}" >> $GITHUB_OUTPUT
+ 
+      - name: Check environments
+        id: filter-repos
+        run: |
+          REPO_LIST=${{ needs.repo-list.outputs.repos }}
+          echo $REPO_LIST
+          echo $ORG_NAME
+          echo $GH_TOKEN
