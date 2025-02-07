@@ -7,24 +7,24 @@ env:
   TEAM_NAMES: '["devops-repo-admins", "devops"]'
 
 jobs:
-  check-github-context:
-    runs-on: ubuntu-latest
-    outputs:
-      reviewers_json: ${{ steps.testing.outputs.reviewers_json }}
-    steps:
-      - name: Print repository owner login
-        run: |
-          echo ${{ github.event.repository.owner.login }}
-          echo ${{ github.event.repository.owner }}
-          echo ${{ github.repository_owner }}
+  # check-github-context:
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     reviewers_json: ${{ steps.testing.outputs.reviewers_json }}
+  #   steps:
+  #     - name: Print repository owner login
+  #       run: |
+  #         echo ${{ github.event.repository.owner.login }}
+  #         echo ${{ github.event.repository.owner }}
+  #         echo ${{ github.repository_owner }}
 
-      - name: Print
-        run: env | sort
-      - name: Dump github context
-        run:   echo "$GITHUB_CONTEXT"
-        shell: bash
-        env:
-         GITHUB_CONTEXT: ${{ toJson(github) }}
+  #     - name: Print
+  #       run: env | sort
+  #     - name: Dump github context
+  #       run:   echo "$GITHUB_CONTEXT"
+  #       shell: bash
+  #       env:
+  #        GITHUB_CONTEXT: ${{ toJson(github) }}
 
   repo-list:
     runs-on: ubuntu-latest
@@ -90,4 +90,4 @@ jobs:
       - name: github access token
         run: |
           echo ${{ needs.check-environments.outputs.repos_without_environments }}
-          echo "${{ fromJson(needs.check-environments.outputs.repos_without_environments).length }}
+          echo "${{ fromJson(needs.check-environments.outputs.repos_without_environments).length }}"
