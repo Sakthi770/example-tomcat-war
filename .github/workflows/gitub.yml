@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: repo-list
     env:
-      ORG_NAME: ${{ needs.repo-list.outputs.ORG_NAME}}
+      ORG_NAME: ${{ needs.repo-list.outputs.ORG_NAME }}
       TEST_TOKEN: ${{ needs.repo-list.outputs.TEST_TOKEN }}
     outputs:
       repos_without_environments: ${{ steps.filter-repos.outputs.repos_without_environments }}
@@ -80,14 +80,13 @@ jobs:
           echo $REPO_LIST
           echo $ORG_NAME
           echo $TEST_TOKEN
-          echo "repos_without_environments=["test"]" >> "$GITHUB_OUTPUT"
-          
+          echo "repos_without_environments=[\"test\"]" >> $GITHUB_OUTPUT
+          echo "repos_without_environments=[\"test\"]" >> $GITHUB_ENV
+
   add-environments:
-    if: ${{ fromJson(needs.check-environments.outputs.repos_without_environments) != '[]' }}
+    if: ${{ fromJson(needs.check-environments.outputs.repos_without_environments).length > 0 }}
     needs: [check-environments, repo-list]
     runs-on: ubuntu-latest
-
-
     steps:
-        - name: github access token
-          run: echo "ok"
+      - name: github access token
+        run: echo "ok"
