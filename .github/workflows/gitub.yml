@@ -86,7 +86,7 @@ jobs:
           
   add-environments:
     needs: [check-environments, repo-list]
-    runs-on: linux
+    runs-on: ubuntu-latest
     if: ${{ fromJson(needs.check-environments.outputs.repos_without_environments).length > 0 }}
     strategy:
         max-parallel: 1
