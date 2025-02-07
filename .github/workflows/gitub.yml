@@ -90,4 +90,4 @@ jobs:
       - name: github access token
         run: |
           echo ${{ needs.check-environments.outputs.repos_without_environments }}
-          echo "${{ fromJson(needs.check-environments.outputs.repos_without_environments).length }}"
+          echo "Length: ${{ fromJson(needs.check-environments.outputs.repos_without_environments).length }}"
