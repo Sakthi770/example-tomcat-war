@@ -84,9 +84,8 @@ jobs:
           echo "repos_without_environments=[\"test\"]" >> $GITHUB_ENV
 
   add-environments:
-    if: ${{ fromJson(needs.check-environments.outputs.repos_without_environments).length > 0 }}
     needs: [check-environments, repo-list]
     runs-on: ubuntu-latest
     steps:
       - name: github access token
-        run: echo "ok"
+        run: echo "${{ fromJson(needs.check-environments.outputs.repos_without_environments).length }}"
