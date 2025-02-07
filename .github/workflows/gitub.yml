@@ -66,8 +66,6 @@ jobs:
       TEST_TOKEN: ${{ needs.repo-list.outputs.TEST_TOKEN }}
     outputs:
       repos_without_environments: ${{ steps.filter-repos.outputs.repos_without_environments }}
-      all_repos: ${{ steps.get-all-repos.outputs.repos }}
-      ORG_NAME: ${{ needs.repo-list.outputs.ORG_NAME}}
     steps:
       - name: Get all repos
         id: get-all-repos
@@ -88,9 +86,6 @@ jobs:
     needs: [check-environments, repo-list]
     runs-on: ubuntu-latest
     if: ${{ fromJson(needs.check-environments.outputs.repos_without_environments).length > 0 }}
-    strategy:
-        matrix:
-            repo: ${{ fromJson(needs.check-environments.outputs.repos_without_environments) }}
 
     steps:
         - name: github access token
