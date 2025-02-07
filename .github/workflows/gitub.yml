@@ -82,3 +82,19 @@ jobs:
           echo $REPO_LIST
           echo $ORG_NAME
           echo $TEST_TOKEN
+          echo "repos_without_environments=["test"]" >> "$GITHUB_OUTPUT"
+          
+  add-environments:
+    needs: [check-environments, repo-list]
+    runs-on: linux
+    if: ${{ fromJson(needs.check-environments.outputs.repos_without_environments).length > 0 }}
+    strategy:
+        max-parallel: 1
+        matrix:
+            repo: ${{ fromJson(needs.check-environments.outputs.repos_without_environments) }}
+    env:
+        ORG_NAME: ${{ needs.repo-list.outputs.ORG_NAME}}
+        VAULT_NAME: ${{ needs.repo-list.outputs.VAULT_NAME}}
+    steps:
+        - name: github access token
+          run: |
