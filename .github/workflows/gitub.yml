@@ -89,5 +89,6 @@ jobs:
     steps:
       - name: github access token
         run: |
-          echo ${{ needs.check-environments.outputs.repos_without_environments }}
+          echo "Repos without environments: ${{ needs.check-environments.outputs.repos_without_environments }}"
+          echo "Parsed JSON: ${{ fromJson(needs.check-environments.outputs.repos_without_environments) }}"
           echo "Length: ${{ fromJson(needs.check-environments.outputs.repos_without_environments).length }}"
