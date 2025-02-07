@@ -92,9 +92,7 @@ jobs:
         max-parallel: 1
         matrix:
             repo: ${{ fromJson(needs.check-environments.outputs.repos_without_environments) }}
-    env:
-        ORG_NAME: ${{ needs.repo-list.outputs.ORG_NAME}}
-        VAULT_NAME: ${{ needs.repo-list.outputs.VAULT_NAME}}
+
     steps:
         - name: github access token
-          run: |
+          run: echo "ok"
