@@ -85,7 +85,6 @@ jobs:
   add-environments:
     needs: [check-environments, repo-list]
     runs-on: ubuntu-latest
-    if: ${{ fromJson(needs.check-environments.outputs.repos_without_environments).length > 0 }}
 
     steps:
         - name: github access token
