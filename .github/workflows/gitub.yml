@@ -13,6 +13,7 @@ jobs:
   steps:
     - name: create a environment variable
       run: |
+        ENV="dev"
         dev_subscription_name="t12232"
         uat_subscription_name="u12345"
         prod_subscription_name="p67890"
