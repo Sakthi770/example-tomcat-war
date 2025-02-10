@@ -1,0 +1,10 @@
+name: Example Workflow
+ 
+on: [push]
+ 
+jobs:
+  call-template:
+    uses: ./.github/workflows/reuse.yml
+    with:
+      environment: uat
+      env_file_path: ${{ format('{0}.env', inputs.environment) }}
