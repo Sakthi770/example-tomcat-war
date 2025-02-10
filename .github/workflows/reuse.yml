@@ -1,0 +1,20 @@
+name: Reusable Workflow
+ 
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      env_file_path:
+        required: true
+        type: string
+ 
+jobs:
+  example-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print environment
+        run: echo "Environment:${{ inputs.environment }}"
+      - name: Print env file path
+        run: echo "Env file path:${{ inputs.env_file_path }}"
