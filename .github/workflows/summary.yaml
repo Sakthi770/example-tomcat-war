@@ -1,0 +1,15 @@
+name: test summary environment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate-links:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate Links
+        run: |
+          echo "## Links Summary" >> $GITHUB_STEP_SUMMARY
+          echo "[Link1" >> $GITHUB_STEP_SUMMARY
+          echo "Link 2" >> $GITHUB_STEP_SUMMARY
+          echo "Link 3" >> $GITHUB_STEP_SUMMARY
